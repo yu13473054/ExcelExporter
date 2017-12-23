@@ -1,0 +1,214 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2411fde064c56704ba453d24750dd815, type: 3}
+  m_Name: AchievementLevelProperty
+  m_EditorClassIdentifier: 
+  _properties:
+  - _level: 1
+    _desc: 1
+    _requireBonus: 50
+    _image: headPart_medal4
+  - _level: 2
+    _desc: 2
+    _requireBonus: 100
+    _image: headPart_medal4
+  - _level: 3
+    _desc: 3
+    _requireBonus: 150
+    _image: headPart_medal4
+  - _level: 4
+    _desc: 4
+    _requireBonus: 200
+    _image: headPart_medal4
+  - _level: 5
+    _desc: 5
+    _requireBonus: 250
+    _image: headPart_medal4
+  - _level: 6
+    _desc: 6
+    _requireBonus: 300
+    _image: headPart_medal4
+  - _level: 7
+    _desc: 7
+    _requireBonus: 350
+    _image: headPart_medal4
+  - _level: 8
+    _desc: 8
+    _requireBonus: 400
+    _image: headPart_medal4
+  - _level: 9
+    _desc: 9
+    _requireBonus: 450
+    _image: headPart_medal4
+  - _level: 10
+    _desc: 10
+    _requireBonus: 550
+    _image: headPart_medal4
+  - _level: 11
+    _desc: 11
+    _requireBonus: 650
+    _image: headPart_medal3
+  - _level: 12
+    _desc: 12
+    _requireBonus: 750
+    _image: headPart_medal3
+  - _level: 13
+    _desc: 13
+    _requireBonus: 850
+    _image: headPart_medal3
+  - _level: 14
+    _desc: 14
+    _requireBonus: 950
+    _image: headPart_medal3
+  - _level: 15
+    _desc: 15
+    _requireBonus: 1150
+    _image: headPart_medal3
+  - _level: 16
+    _desc: 16
+    _requireBonus: 1350
+    _image: headPart_medal3
+  - _level: 17
+    _desc: 17
+    _requireBonus: 1550
+    _image: headPart_medal3
+  - _level: 18
+    _desc: 18
+    _requireBonus: 1750
+    _image: headPart_medal3
+  - _level: 19
+    _desc: 19
+    _requireBonus: 1950
+    _image: headPart_medal3
+  - _level: 20
+    _desc: 20
+    _requireBonus: 2250
+    _image: headPart_medal3
+  - _level: 21
+    _desc: 21
+    _requireBonus: 2550
+    _image: headPart_medal2
+  - _level: 22
+    _desc: 22
+    _requireBonus: 2850
+    _image: headPart_medal2
+  - _level: 23
+    _desc: 23
+    _requireBonus: 3150
+    _image: headPart_medal2
+  - _level: 24
+    _desc: 24
+    _requireBonus: 3450
+    _image: headPart_medal2
+  - _level: 25
+    _desc: 25
+    _requireBonus: 3850
+    _image: headPart_medal2
+  - _level: 26
+    _desc: 26
+    _requireBonus: 4250
+    _image: headPart_medal2
+  - _level: 27
+    _desc: 27
+    _requireBonus: 4650
+    _image: headPart_medal2
+  - _level: 28
+    _desc: 28
+    _requireBonus: 5050
+    _image: headPart_medal2
+  - _level: 29
+    _desc: 29
+    _requireBonus: 5450
+    _image: headPart_medal2
+  - _level: 30
+    _desc: 30
+    _requireBonus: 6050
+    _image: headPart_medal2
+  - _level: 31
+    _desc: 31
+    _requireBonus: 6650
+    _image: headPart_medal1
+  - _level: 32
+    _desc: 32
+    _requireBonus: 7250
+    _image: headPart_medal1
+  - _level: 33
+    _desc: 33
+    _requireBonus: 7850
+    _image: headPart_medal1
+  - _level: 34
+    _desc: 34
+    _requireBonus: 8450
+    _image: headPart_medal1
+  - _level: 35
+    _desc: 35
+    _requireBonus: 9250
+    _image: headPart_medal1
+  - _level: 36
+    _desc: 36
+    _requireBonus: 10050
+    _image: headPart_medal1
+  - _level: 37
+    _desc: 37
+    _requireBonus: 10850
+    _image: headPart_medal1
+  - _level: 38
+    _desc: 38
+    _requireBonus: 11650
+    _image: headPart_medal1
+  - _level: 39
+    _desc: 39
+    _requireBonus: 12450
+    _image: headPart_medal1
+  - _level: 40
+    _desc: 40
+    _requireBonus: 13450
+    _image: headPart_medal1
+  - _level: 41
+    _desc: 41
+    _requireBonus: 14450
+    _image: headPart_medal0
+  - _level: 42
+    _desc: 42
+    _requireBonus: 15450
+    _image: headPart_medal0
+  - _level: 43
+    _desc: 43
+    _requireBonus: 16450
+    _image: headPart_medal0
+  - _level: 44
+    _desc: 44
+    _requireBonus: 17450
+    _image: headPart_medal0
+  - _level: 45
+    _desc: 45
+    _requireBonus: 18650
+    _image: headPart_medal0
+  - _level: 46
+    _desc: 46
+    _requireBonus: 19850
+    _image: headPart_medal0
+  - _level: 47
+    _desc: 47
+    _requireBonus: 21050
+    _image: headPart_medal0
+  - _level: 48
+    _desc: 48
+    _requireBonus: 22250
+    _image: headPart_medal0
+  - _level: 49
+    _desc: 49
+    _requireBonus: 23450
+    _image: headPart_medal0
+  - _level: 50
+    _desc: 50
+    _requireBonus: 0
+    _image: headPart_medal0
