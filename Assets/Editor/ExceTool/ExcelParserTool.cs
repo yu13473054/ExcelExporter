@@ -13,10 +13,8 @@ public class ExcelParserTool
     private static string TableDir = "/配置表";
     private static string ExcelDirPath = System.Environment.CurrentDirectory + TableDir;
 
-    private static string RelativePropertyDirPath = "/Scripts/DataBase/Property";
-    private static string PropertyDirPath = Application.dataPath + RelativePropertyDirPath;
-    private static string ExporterDirPath = Application.dataPath + "/Editor/DataBase/Exporter";
-    private static string ExcelLoaderPath = Application.dataPath + "/Editor/DataBase/ExcelLoader.cs";
+    private static string PropertyDirPath = Application.dataPath + "/Scripts/DataBase/Property";
+    private static string ExporterDirPath = Application.dataPath + "/Editor/ExceTool/Exporter";
     private static string AssetDataDirPath = "Assets/Res/AssetData";
 
     [MenuItem("表格数据/生成数据结构文件")]
@@ -35,8 +33,23 @@ public class ExcelParserTool
             Directory.CreateDirectory(ExporterDirPath);
         }
 
-        StartGenerate();
+        //清理之前的Property数据文件
+        ClearOldFiles(PropertyDirPath);
+        //清理之前的Exporter数据文件
+        ClearOldFiles(ExporterDirPath);
+
+        //获得所有的excel文件
+        string[] files = Directory.GetFiles(ExcelDirPath, "*.xlsx");
+        for (int i = 0; i < files.Length; i++)
+        {
+            string singleFile = files[i];
+            string fileName = Path.GetFileNameWithoutExtension(singleFile);
+            EditorUtility.DisplayProgressBar("正在生成数据结构", Path.GetFullPath(singleFile), (i + 1) * 1f / files.Length);
+            ParserSingleFile(singleFile, fileName);
+        }
         AssetDatabase.Refresh();
+        EditorUtility.ClearProgressBar();
+        Debug.Log("所有Excel文件对应的解析文件创建完成");
     }
 
     [MenuItem("表格数据/解析生成程序使用的数据文件")]
@@ -52,39 +65,15 @@ public class ExcelParserTool
         for (int i = 0; i < excelExporters.Length; i++)
         {
             string exporterName = Path.GetFileNameWithoutExtension(excelExporters[i]);
-            string propertyName = exporterName.Replace("Exporter", "Property");
+            string propertyName = exporterName.Replace("Exporter", "Data");
+            EditorUtility.DisplayProgressBar("正在导出数据...", propertyName, (i + 1) * 1f / excelExporters.Length);
             MethodInfo method = Type.GetType(exporterName).GetMethod("ReadExcel");
             Object result = (Object) method.Invoke(null,null);
             AssetDatabase.CreateAsset(result,string.Format("{0}/{1}.asset", AssetDataDirPath, propertyName));
         }
-
-
-        ExcelLoader.LoadExcel();
         AssetDatabase.Refresh();
-    }
-
-    static void StartGenerate()
-    {
-        //清理之前的Property数据文件
-        ClearOldFiles(PropertyDirPath);
-        //清理之前的Exporter数据文件
-        ClearOldFiles(ExporterDirPath);
-        AssetDatabase.Refresh();
-
-        //获得所有的excel文件
-        string[] files = Directory.GetFiles(ExcelDirPath,"*.xlsx");
-        for (int i = 0; i < files.Length; i++)
-        {
-            string singleFile = files[i];
-            string fileName = Path.GetFileNameWithoutExtension(singleFile);
-            EditorUtility.DisplayProgressBar("正在生成数据结构", Path.GetFullPath(singleFile), (i+1)*1f/files.Length);
-            ParserSingleFile(singleFile,fileName);
-        }
-        Debug.Log("所有Excel文件处理完成");
-        //创建所有excel表格对应的解析文件
-        CreateExcelLoader();
-        Debug.Log("所有Excel文件对应的解析文件创建完成");
         EditorUtility.ClearProgressBar();
+        Debug.Log("Excel数据导出成功！！");
     }
 
     static void ClearOldFiles(string dirPath)
@@ -140,10 +129,7 @@ public class ExcelParserTool
             }
 
             CreatCSFile(propertyName, keys, typeChecks, values);
-
-
             CreatExporter(fileName, wookSheet.TableName, propertyName, keys, typeChecks, values);
-            Debug.Log(string.Format("解析{0}.xlsx完成，生成{1}Property、{1}Exporter", fileName, propertyName));
         }
     }
 
@@ -159,14 +145,14 @@ public class ExcelParserTool
         sr.WriteLine("using UnityEngine;");
         sr.WriteLine();
         //创建ScriptableObject代码
-        sr.WriteLine(string.Format("public class {0}Data : ScriptableObject", csPrefix));
+        sr.WriteLine("public class {0}Data : ScriptableObject", csPrefix);
         sr.WriteLine("{");
-        sr.WriteLine(string.Format("\tpublic List<{0}Property> _properties = new List<{0}Property>();", csPrefix));
+        sr.WriteLine("\tpublic List<{0}Property> _properties = new List<{0}Property>();", csPrefix);
         sr.WriteLine("}");
         sr.WriteLine();
         //创建单个对象的解析类
         sr.WriteLine("[Serializable]");
-        sr.WriteLine(string.Format("public class {0}Property", csPrefix));
+        sr.WriteLine("public class {0}Property", csPrefix);
         sr.WriteLine("{");
 
         for (int i = 0; i < keys.Count; i++)
@@ -189,7 +175,7 @@ public class ExcelParserTool
             {
                 valueType = keys[i];
             }
-            sr.WriteLine(string.Format("\tpublic {0} _{1};", valueType, GetValueType(values[i])));
+            sr.WriteLine("\tpublic {0} _{1};", valueType, GetValueType(values[i]));
         }
 
         sr.WriteLine("}");
@@ -210,17 +196,17 @@ public class ExcelParserTool
         exporSw.WriteLine("using System.IO;");
         exporSw.WriteLine("using System.Data;");
         exporSw.WriteLine();
-        exporSw.WriteLine(string.Format("public class {0}Exporter", propertyName));
+        exporSw.WriteLine("public class {0}Exporter", propertyName);
         exporSw.WriteLine("{");
         exporSw.WriteLine();
-        exporSw.WriteLine(string.Format("\tpublic static {0}Data ReadExcel()", propertyName));
+        exporSw.WriteLine("\tpublic static {0}Data ReadExcel()", propertyName);
         exporSw.WriteLine("\t{");
-        exporSw.WriteLine(string.Format("\t\tstring excelName = System.Environment.CurrentDirectory + \"{0}/{1}.xlsx\";", TableDir, fileName));
+        exporSw.WriteLine("\t\tstring excelName = System.Environment.CurrentDirectory + \"{0}/{1}.xlsx\";", TableDir, fileName);
         exporSw.WriteLine("\t\tFileStream stream = File.Open(excelName, FileMode.Open, FileAccess.Read, FileShare.Read);");
         exporSw.WriteLine("\t\tIExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(stream);");
         exporSw.WriteLine("\t\tDataSet result = excelReader.AsDataSet();");
         exporSw.WriteLine();
-        exporSw.WriteLine(string.Format("\t\tSystem.Data.DataTable wookSheet = result.Tables[\"{0}\"];", tableName));
+        exporSw.WriteLine("\t\tSystem.Data.DataTable wookSheet = result.Tables[\"{0}\"];", tableName);
         exporSw.WriteLine("\t\tint startRow = 5;");
         exporSw.WriteLine("\t\tint endRow = wookSheet.Rows.Count;");
         exporSw.WriteLine("\t\tint columnCount = wookSheet.Columns.Count;");
@@ -233,17 +219,17 @@ public class ExcelParserTool
         exporSw.WriteLine("\t\t\tkeys.Add(keyText);");
         exporSw.WriteLine("\t\t}");
         exporSw.WriteLine("\t\tvar headerColumns = ExcelHelper.GetColumnsHeader(wookSheet, keys);");
-        exporSw.WriteLine(string.Format("\t\t{0}Data Data = ScriptableObject.CreateInstance<{0}Data>();", propertyName));
+        exporSw.WriteLine("\t\t{0}Data Data = ScriptableObject.CreateInstance<{0}Data>();", propertyName);
 
         exporSw.WriteLine("\t\tfor (int row = startRow; row < endRow; row++)");
         exporSw.WriteLine("\t\t{");
         exporSw.WriteLine("\t\t\tstring checkStr = ExcelHelper.GetSheetValue(wookSheet, row, headerColumns[keys[0]]);");
         exporSw.WriteLine("\t\t\tif(checkStr.Equals(string.Empty))");
         exporSw.WriteLine("\t\t\t\tcontinue;");
-        exporSw.WriteLine(string.Format("\t\t\t{0}Property property = new {0}Property();", propertyName));
+        exporSw.WriteLine("\t\t\t{0}Property property = new {0}Property();", propertyName);
         for (int index = 0; index < values.Count; index++)
         {
-            exporSw.WriteLine(string.Format("\t\t\tproperty._{0} = {1}", GetValueType(values[index]), GetKeyType(keys[index], typeChecks[index], values[index])));
+            exporSw.WriteLine("\t\t\tproperty._{0} = {1}", GetValueType(values[index]), GetKeyType(keys[index], typeChecks[index], values[index]));
         }
 
         exporSw.WriteLine("\t\t\tData._properties.Add(property);");
@@ -253,38 +239,6 @@ public class ExcelParserTool
         exporSw.WriteLine("}");
         exporSw.Close();
         exporFs.Close();
-    }
-
-    static void CreateExcelLoader()
-    {
-        FileStream excelFs = new FileStream(ExcelLoaderPath, FileMode.Create, FileAccess.Write);
-        StreamWriter excelSw = new StreamWriter(excelFs);
-
-        excelSw.WriteLine("using System;");
-        excelSw.WriteLine("using UnityEditor;");
-        excelSw.WriteLine("using UnityEngine;");
-        excelSw.WriteLine();
-        excelSw.WriteLine("public class ExcelLoader");
-        excelSw.WriteLine("{");
-        excelSw.WriteLine("\tpublic static void LoadExcel()");
-        excelSw.WriteLine("\t{");
-
-        string[] excelExporters = Directory.GetFiles(ExporterDirPath,"*.cs");
-        for (int i = 0; i < excelExporters.Length; i++)
-        {
-            string exporterName = Path.GetFileNameWithoutExtension(excelExporters[i]);
-            string propertyName = exporterName.Replace("Exporter", "Property");
-            string DataName = exporterName.Replace("Exporter","Data");
-            string DataLowName = DataName.Substring(0, 1).ToLower() + DataName.Substring(1);
-
-            excelSw.WriteLine("\t\t{0} _{1} = ScriptableObject.CreateInstance<{0}>();", DataName, DataLowName);
-            excelSw.WriteLine("\t\t_{0} = {1}.ReadExcel();", DataLowName, exporterName);
-            excelSw.WriteLine("\t\tAssetDatabase.CreateAsset(_{0}, \"{1}/{2}.asset\");\n", DataLowName,AssetDataDirPath, propertyName);
-        }
-        excelSw.WriteLine("\t}");
-        excelSw.WriteLine("}");
-        excelSw.Close();
-        excelFs.Close();
     }
 
     public static string GetKeyType(string keyName, string checkName, string columnName)
